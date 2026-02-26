@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe | VeloNow</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="subscribe-page">
+    <nav class="navbar">
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">VeloNow<span>.</span></a>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#features">Features</a></li>
+            <li><a href="index.html#gear">Gear</a></li>
+            <li><a href="index.html#training">Training</a></li>
+        </ul>
+    </nav>
+
+    <main class="form-container">
+        <div class="glass-card form-card">
+            <h2>Join the <span class="highlight">Peloton.</span></h2>
+            <p>Get the definitive voice in modern cycling culture delivered straight to your inbox and doorstep.</p>
+
+            <form id="subscribeForm" class="subscribe-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Eddy Merckx">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="eddy@cannibal.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required placeholder="123 Main St">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" required placeholder="Roubaix">
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state" required placeholder="NORD">
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="zip">Zip Code</label>
+                        <input type="text" id="zip" name="zip" required placeholder="59100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Subscription Tier</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="plan" value="digital" checked>
+                            <span class="custom-radio"></span>
+                            Digital Only ($4.99/mo)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="plan" value="print">
+                            <span class="custom-radio"></span>
+                            Print + Digital ($9.99/mo)
+                        </label>
+                    </div>
+                </div>
+
+                <div id="formMessage"
+                    style="display: none; padding: 1rem; border-radius: 8px; margin-top: 1rem; text-align: center;">
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Complete Registration</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const button = form.querySelector('button[type="submit"]');
+            const messageEl = document.getElementById('formMessage');
+
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                messageEl.style.display = 'block';
+                if (result.status === 'success') {
+                    messageEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+                    messageEl.style.color = '#4caf50';
+                    messageEl.textContent = 'Welcome to the Peloton! Your subscription was successful.';
+                    form.reset();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                messageEl.style.display = 'block';
+                messageEl.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+                messageEl.style.color = '#f44336';
+                messageEl.textContent = 'Oops! Something went wrong: ' + error.message;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Complete Registration';
+            }
+        });
+    </script>
+</body>
+
+</html>
