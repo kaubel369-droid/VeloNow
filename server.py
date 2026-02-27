@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import urllib.parse
 import os
+import json
 
 PORT = int(os.environ.get("PORT", 8000))
 
@@ -20,8 +21,12 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({'status': 'success', 'message': 'Successfully subscribed (Mock)!'}).encode())
-                self.wfile.write(json.dumps({'status': 'success', 'message': 'Successfully subscribed!'}).encode())
+                
+                response = {
+                    'status': 'success', 
+                    'message': f'Successfully subscribed {data.get("email", "to the pelleton")}!'
+                }
+                self.wfile.write(json.dumps(response).encode())
             except Exception as e:
                 self.send_response(500)
                 self.send_header('Content-type', 'application/json')
