@@ -107,10 +107,10 @@
                 if (result.status === 'success') {
                     messageEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
                     messageEl.style.color = '#4caf50';
-                    messageEl.textContent = 'Welcome to the Peloton! Your subscription was successful.';
+                    messageEl.textContent = result.message || 'Welcome to the Peloton! Your subscription was successful.';
                     form.reset();
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(result.message || 'Unknown error');
                 }
             } catch (error) {
                 messageEl.style.display = 'block';

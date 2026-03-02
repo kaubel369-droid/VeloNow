@@ -6,8 +6,14 @@ import json
 import psycopg2
 from psycopg2 import pool
 
+import sys
+
 PORT = int(os.environ.get("PORT", 8000))
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+print(f"DEBUG: Starting server. PORT={PORT}. DATABASE_URL set={'Yes' if DATABASE_URL else 'No'}", flush=True)
+if DATABASE_URL:
+    print(f"DEBUG: DATABASE_URL length: {len(DATABASE_URL)}", flush=True)
 
 # Initialize database connection pool
 try:
@@ -38,7 +44,9 @@ try:
         db_pool = None
         print("DATABASE_URL not set. Running in memory-only mode.")
 except Exception as e:
-    print(f"Error initializing database: {e}")
+    print(f"CRITICAL ERROR initializing database: {e}", flush=True)
+    import traceback
+    traceback.print_exc()
     db_pool = None
 
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -78,11 +86,14 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                                 plan = EXCLUDED.plan;
                             """, (name, email, address, city, state, zip_code, plan))
                             conn.commit()
+                            print(f"INFO: Successfully saved subscription for {email}", flush=True)
                     finally:
                         db_pool.putconn(conn)
                     msg = f'Successfully subscribed {email} to the peloton!'
                 else:
-                    msg = f'Successfully subscribed {email} (Development mode - no database)!'
+                    msg = f'ERROR: Database not configured. Could not save {email}.'
+                    print(f"ERROR: Subscription attempt for {email} failed because db_pool is None", flush=True)
+                    raise Exception(msg)
 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
