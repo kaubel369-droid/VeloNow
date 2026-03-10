@@ -1,0 +1,34 @@
+{
+  "hasSelection": true,
+  "selectedElement": {
+    "tagName": "H3",
+    "path": "#features > div:nth-child(2) > article:nth-child(2) > div:nth-child(2) > h3:nth-child(1)",
+    "agId": "ag-1773073410043-60",
+    "textContent": "Winter Base Miles",
+    "styles": {
+      "color": "rgb(59, 59, 59)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontSize": "15.21px",
+      "fontWeight": "700",
+      "padding": "0px",
+      "margin": "15.21px 0px",
+      "display": "block",
+      "position": "static",
+      "left": "auto",
+      "top": "auto"
+    },
+    "rect": {
+      "x": 20,
+      "y": 573.765625,
+      "width": 509,
+      "height": 18
+    },
+    "sourceLocation": {
+      "file": "/Users/kevinaubel/Library/CloudStorage/GoogleDrive-kaubel369@gmail.com/My Drive/Antigravity/VeloNow/index.html",
+      "line": 61,
+      "column": 20
+    }
+  },
+  "currentFile": null,
+  "timestamp": 1773073471103
+}
