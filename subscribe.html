@@ -19,6 +19,7 @@
             <li><a href="index.html#features">Features</a></li>
             <li><a href="index.html#gear">Gear</a></li>
             <li><a href="index.html#training">Training</a></li>
+            <li id="auth-nav"></li>
         </ul>
     </nav>
 
@@ -79,6 +80,9 @@
         </div>
     </main>
 
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-client.js"></script>
     <script>
         document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -89,29 +93,41 @@
             button.disabled = true;
             button.textContent = 'Processing...';
 
+            const user = await velonowAuth.getCurrentUser();
+            if (!user) {
+                alert('Please login or sign up before subscribing!');
+                location.href = 'auth.html';
+                return;
+            }
+
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/subscribe', {
+                // 1. Log to the existing python "backend" if it's running (mocking a real backend log)
+                await fetch('/subscribe', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
-                });
+                }).catch(err => console.log('Mock backend offline, continuing...'));
 
-                const result = await response.json();
+                // 2. Perform actual upgrade in Supabase
+                const { error } = await velonowAuth.supabase
+                    .from('profiles')
+                    .update({ role: 'subscriber' })
+                    .eq('id', user.id);
+
+                if (error) throw error;
 
                 messageEl.style.display = 'block';
-                if (result.status === 'success') {
-                    messageEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-                    messageEl.style.color = '#4caf50';
-                    messageEl.textContent = result.message || 'Welcome to the Peloton! Your subscription was successful.';
-                    form.reset();
-                } else {
-                    throw new Error(result.message || 'Unknown error');
-                }
+                messageEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+                messageEl.style.color = '#4caf50';
+                messageEl.textContent = 'Welcome to the Peloton! Your account has been upgraded to Subscriber.';
+                
+                setTimeout(() => {
+                    location.href = 'profile.html';
+                }, 2000);
+
             } catch (error) {
                 messageEl.style.display = 'block';
                 messageEl.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';

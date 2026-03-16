@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up | VeloNow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 120px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .auth-tab {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .auth-tab.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-family: inherit;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">VeloNow<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li id="auth-nav"></li>
+        </ul>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-tabs">
+            <div id="tab-login" class="auth-tab active">Login</div>
+            <div id="tab-signup" class="auth-tab">Sign Up</div>
+        </div>
+
+        <form id="auth-form">
+            <div class="form-group" id="name-group" style="display: none;">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required placeholder="cycling@example.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" id="submit-btn" class="btn-primary auth-btn">Login</button>
+            <p id="error-msg" class="error-message"></p>
+        </form>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script>
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const nameGroup = document.getElementById('name-group');
+        const submitBtn = document.getElementById('submit-btn');
+        const authForm = document.getElementById('auth-form');
+        const errorMsg = document.getElementById('error-msg');
+
+        let isLogin = true;
+
+        tabLogin.addEventListener('click', () => {
+            isLogin = true;
+            tabLogin.classList.add('active');
+            tabSignup.classList.remove('active');
+            nameGroup.style.display = 'none';
+            submitBtn.textContent = 'Login';
+            errorMsg.style.display = 'none';
+        });
+
+        tabSignup.addEventListener('click', () => {
+            isLogin = false;
+            tabSignup.classList.add('active');
+            tabLogin.classList.remove('active');
+            nameGroup.style.display = 'block';
+            submitBtn.textContent = 'Sign Up';
+            errorMsg.style.display = 'none';
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('full_name').value;
+
+            try {
+                if (isLogin) {
+                    const { error } = await velonowAuth.supabase.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
+                    if (error) throw error;
+                    location.href = 'index.html';
+                } else {
+                    const { error } = await velonowAuth.supabase.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: {
+                                full_name: fullName,
+                            }
+                        }
+                    });
+                    if (error) throw error;
+                    alert('Check your email for the confirmation link!');
+                    isLogin = true;
+                    tabLogin.click();
+                }
+            } catch (err) {
+                errorMsg.textContent = err.message;
+                errorMsg.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = isLogin ? 'Login' : 'Sign Up';
+            }
+        });
+    </script>
+</body>
+</html>

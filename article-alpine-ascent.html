@@ -73,6 +73,7 @@
             <li><a href="index.html#features">Features</a></li>
             <li><a href="index.html#gear">Gear</a></li>
             <li><a href="index.html#training">Training</a></li>
+            <li id="auth-nav"></li>
             <li><a href="subscribe.html" class="btn-primary">Subscribe</a></li>
         </ul>
     </nav>
@@ -101,11 +102,20 @@
                 <iframe src="https://www.youtube.com/embed/EikIC1PRfAY" title="Tour de France Stage 12 Highlights" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
             
-            <p id="p3">As you ascend through the middle section, the climb reveals its unique and boisterous personality. Beyond the sheer physical challenge, there is the cultural fervor of the spectators that lines every inch of the 21 bends. Each hairpin is famously named after a stage winner, and as you tick them off, you are literally climbing through a list of the sport's icons. Bend 7, famously known as "Dutch Corner," is the undeniable epicentre of this mountain madness. Here, thousands of orange-clad fans, a tradition born from the era when Dutch riders like Hennie Kuiper and Joop Zoetemelk dominated the slopes, transform the hairpin into a chaotic sea of noise, music, and flares. For a professional rider, navigating this narrow corridor of sound is as much a psychological trial as it is a physical one, demanding total concentration amidst the celebratory bedlam.</p>
+            <p id="p3" class="premium-content">As you ascend through the middle section, the climb reveals its unique and boisterous personality. Beyond the sheer physical challenge, there is the cultural fervor of the spectators that lines every inch of the 21 bends. Each hairpin is famously named after a stage winner, and as you tick them off, you are literally climbing through a list of the sport's icons. Bend 7, famously known as "Dutch Corner," is the undeniable epicentre of this mountain madness. Here, thousands of orange-clad fans, a tradition born from the era when Dutch riders like Hennie Kuiper and Joop Zoetemelk dominated the slopes, transform the hairpin into a chaotic sea of noise, music, and flares. For a professional rider, navigating this narrow corridor of sound is as much a psychological trial as it is a physical one, demanding total concentration amidst the celebratory bedlam.</p>
             
-            <p id="p4">The modern history of the climb continues to be written with every passing decade, adding new chapters to its storied legacy. We saw the legendary Marco Pantani set the definitive climbing record of 36 minutes and 50 seconds during the height of the 1990s—a mark that remains a shimmering target for today’s elite climbers. More recently, in the 2022 Tour de France, the cycling world was treated to a masterclass by the British phenom Tom Pidcock. Pidcock showcased the modern evolution of the sport, combining his mountain biking prowess with road racing tactical brilliance. After a daring, white-knuckle descent on the Galibier, he navigated the Alpe's 21 hairpins with clinical solo efficiency, taking victory on Bastille Day. It was a performance that proved the mountain still possesses the power to crown new kings and break the strongest of hearts, all within the span of a single afternoon in July.</p>
+            <p id="p4" class="premium-content">The modern history of the climb continues to be written with every passing decade, adding new chapters to its storied legacy. We saw the legendary Marco Pantani set the definitive climbing record of 36 minutes and 50 seconds during the height of the 1990s—a mark that remains a shimmering target for today’s elite climbers. More recently, in the 2022 Tour de France, the cycling world was treated to a masterclass by the British phenom Tom Pidcock. Pidcock showcased the modern evolution of the sport, combining his mountain biking prowess with road racing tactical brilliance. After a daring, white-knuckle descent on the Galibier, he navigated the Alpe's 21 hairpins with clinical solo efficiency, taking victory on Bastille Day. It was a performance that proved the mountain still possesses the power to crown new kings and break the strongest of hearts, all within the span of a single afternoon in July.</p>
             
-            <p id="p5">Conquering Alpe d'Huez is a rite of passage for every serious cyclist. It is a 13.8-kilometer journey that tests your pacing, your gearing, and your mental fortitude. Whether you are racing for a yellow jersey or simply aiming to finish before the sun sets, the Alpe offers a singular connection to the soul of cycling. As you reach the summit and look back down at the serpentine road you've just conquered, you realize why this mountain remains the definitive ascent of the Alps. The Alpine Ascent isn't just a climb; it's a legacy.</p>
+            <p id="p5" class="premium-content">Conquering Alpe d'Huez is a rite of passage for every serious cyclist. It is a 13.8-kilometer journey that tests your pacing, your gearing, and your mental fortitude. Whether you are racing for a yellow jersey or simply aiming to finish before the sun sets, the Alpe offers a singular connection to the soul of cycling. As you reach the summit and look back down at the serpentine road you've just conquered, you realize why this mountain remains the definitive ascent of the Alps. The Alpine Ascent isn't just a climb; it's a legacy.</p>
+
+            <div id="upgrade-gate" class="glass-card" style="display: none; padding: 40px; text-align: center; margin: 40px 0; border: 1px solid var(--primary);">
+                <h2 style="margin-bottom: 20px;">Premium Content Locked</h2>
+                <p style="margin-bottom: 30px;">This feature story is exclusive to VeloNow Subscribers. Join the peloton today to unlock full access to our deep dives, training guides, and gear reviews.</p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <a href="subscribe.html" class="btn-primary">Become a Subscriber</a>
+                    <a href="auth.html" class="btn-secondary">Login</a>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -118,5 +128,13 @@
             <p>&copy; 2026 VeloNow Magazine. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            velonowAuth.protectContent();
+        });
+    </script>
 </body>
 </html>
