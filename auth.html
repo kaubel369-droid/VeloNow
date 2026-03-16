@@ -133,20 +133,33 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
 
+            // Explicitly use window scope and check for readiness
+            const auth = window.velonowAuth;
+            console.log("Form submitted. checking window.velonowAuth...", auth);
+
+            if (!auth || !auth.supabase) {
+                console.error("window.velonowAuth is not ready!", auth);
+                errorMsg.textContent = "Authentication system not ready. Please wait a moment and try again.";
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = isLogin ? 'Login' : 'Sign Up';
+                return;
+            }
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const fullName = document.getElementById('full_name').value;
 
             try {
                 if (isLogin) {
-                    const { error } = await velonowAuth.supabase.auth.signInWithPassword({
+                    const { error } = await auth.supabase.auth.signInWithPassword({
                         email,
                         password,
                     });
                     if (error) throw error;
                     location.href = 'index.html';
                 } else {
-                    const { error } = await velonowAuth.supabase.auth.signUp({
+                    const { error } = await auth.supabase.auth.signUp({
                         email,
                         password,
                         options: {
@@ -161,7 +174,8 @@
                     tabLogin.click();
                 }
             } catch (err) {
-                errorMsg.textContent = err.message;
+                console.error("Auth error:", err);
+                errorMsg.textContent = err.message || "An unexpected error occurred.";
                 errorMsg.style.display = 'block';
             } finally {
                 submitBtn.disabled = false;

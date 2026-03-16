@@ -3,7 +3,7 @@ I want there to be a subscriber account that can view premium content.
 I want there to be a free account that can view free content. 
 I want there to be a way to upgrade from a free account to a paid account. 
 I want there to be a master Admin account
-Add the admin account User:VeloNowAdmin Password:VeloAdmin123%
+Add the admin account User:admin@velonow.com Password:VeloAdmin123%
 I want to use Supabase for the database and authentication. 
 I want to add a new page that will allow users to view their profile and account information. 
 
