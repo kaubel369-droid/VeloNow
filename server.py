@@ -5,15 +5,13 @@ import os
 import json
 import psycopg2
 from psycopg2 import pool
-
+import signal
 import sys
 
 PORT = int(os.environ.get("PORT", 8000))
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 print(f"DEBUG: Starting server. PORT={PORT}. DATABASE_URL set={'Yes' if DATABASE_URL else 'No'}", flush=True)
-if DATABASE_URL:
-    print(f"DEBUG: DATABASE_URL length: {len(DATABASE_URL)}", flush=True)
 
 # Initialize database connection pool
 try:
@@ -45,8 +43,6 @@ try:
         print("DATABASE_URL not set. Running in memory-only mode.")
 except Exception as e:
     print(f"CRITICAL ERROR initializing database: {e}", flush=True)
-    import traceback
-    traceback.print_exc()
     db_pool = None
 
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -61,7 +57,6 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 else:
                     data = dict(urllib.parse.parse_qsl(post_data.decode('utf-8')))
 
-                # Extract all fields
                 name = data.get('name')
                 email = data.get('email')
                 address = data.get('address')
@@ -99,10 +94,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 
-                response = {
-                    'status': 'success', 
-                    'message': msg
-                }
+                response = {'status': 'success', 'message': msg}
                 self.wfile.write(json.dumps(response).encode())
             except Exception as e:
                 self.send_response(500)
@@ -112,10 +104,22 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_error(404, "Endpoint not found")
 
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+
 if __name__ == '__main__':
-    # Change into the directory containing this script so simple server serves the frontend files
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     
-    with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
-        print(f"Server running on port {PORT}. Connect to http://localhost:{PORT}")
-        httpd.serve_forever()
+    server_address = ("0.0.0.0", PORT)
+    httpd = ThreadingHTTPServer(server_address, MyHandler)
+    
+    def signal_handler(sig, frame):
+        print("\nStopping server...", flush=True)
+        httpd.server_close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    print(f"Server running on port {PORT} (0.0.0.0). Check http://localhost:{PORT}", flush=True)
+    httpd.serve_forever()
